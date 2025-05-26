@@ -1,0 +1,41 @@
+# Terraform state files
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Terraform directories
+.terraform/
+.terraform.lock.hcl
+
+# Terraform plan files
+*.tfplan
+
+# Local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Sensitive variable files (if any)
+*.tfvars
+*.tfvars.json
+
+# VS Code settings
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Python virtual environments (if you use any scripts)
+.env/
+venv/
+__pycache__/
+
+# Azure Pipelines artifacts
+*.log
+*.zip
+*.tar.gz
+
+# Node modules (if you use any JS tooling)
+node_modules/

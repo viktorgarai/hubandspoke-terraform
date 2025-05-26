@@ -1,0 +1,47 @@
+trigger: none  # Prevents automatic runs; you can run manually
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: terraform-backend
+  - group: vm-secrets
+  - name: environment
+    value: 'dev'
+  - name: terraformVersion
+    value: '1.6.6'
+
+stages:
+- stage: TerraformDestroy
+  jobs:
+  - job: DestroyJob
+    steps:
+      - task: TerraformInstaller@1
+        inputs:
+          terraformVersion: $(terraformVersion)
+
+      - script: |
+          echo "vm_admin_username = \"$(vm-admin-username)\"" > environments/$(environment)/terraform.tfvars
+          echo "vm_admin_password = \"$(vm-admin-password)\"" >> environments/$(environment)/terraform.tfvars
+        displayName: 'Create terraform.tfvars with VM admin credentials'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+
+      - task: TerraformTaskV4@4
+        displayName: 'Terraform Init'
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'azure-connection'
+          backendAzureRmResourceGroupName: '$(ARM_RESOURCE_GROUP_NAME)'
+          backendAzureRmStorageAccountName: '$(ARM_STORAGE_ACCOUNT_NAME)'
+          backendAzureRmContainerName: '$(ARM_CONTAINER_NAME)'
+          backendAzureRmKey: '$(ARM_KEY)'
+          workingDirectory: 'environments/$(environment)'
+
+      - task: TerraformTaskV4@4
+        displayName: 'Terraform Destroy'
+        inputs:
+          provider: 'azurerm'
+          command: 'destroy'
+          workingDirectory: 'environments/$(environment)'
+          environmentServiceNameAzureRM: 'azure-connection'

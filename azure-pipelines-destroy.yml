@@ -14,39 +14,34 @@ variables:
 stages:
 - stage: TerraformDestroy
   jobs:
-    - deployment: DestroyJob
-      displayName: 'Terraform Destroy'
-      environment: dev # This enables manual approval if configured in Azure DevOps  
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: TerraformInstaller@1
-                inputs:
-                  terraformVersion: $(terraformVersion)
+  - job: DestroyJob
+    steps:
+      - task: TerraformInstaller@1
+        inputs:
+          terraformVersion: $(terraformVersion)
 
-              - script: |
-                  echo "vm_admin_username = \"$(vm-admin-username)\"" > environments/$(environment)/terraform.tfvars
-                  echo "vm_admin_password = \"$(vm-admin-password)\"" >> environments/$(environment)/terraform.tfvars
-                displayName: 'Create terraform.tfvars with VM admin credentials'
-                workingDirectory: $(System.DefaultWorkingDirectory)
+      - script: |
+          echo "vm_admin_username = \"$(vm-admin-username)\"" > environments/$(environment)/terraform.tfvars
+          echo "vm_admin_password = \"$(vm-admin-password)\"" >> environments/$(environment)/terraform.tfvars
+        displayName: 'Create terraform.tfvars with VM admin credentials'
+        workingDirectory: $(System.DefaultWorkingDirectory)
 
-              - task: TerraformTaskV4@4
-                displayName: 'Terraform Init'
-                inputs:
-                  provider: 'azurerm'
-                  command: 'init'
-                  backendServiceArm: 'azure-connection'
-                  backendAzureRmResourceGroupName: '$(ARM_RESOURCE_GROUP_NAME)'
-                  backendAzureRmStorageAccountName: '$(ARM_STORAGE_ACCOUNT_NAME)'
-                  backendAzureRmContainerName: '$(ARM_CONTAINER_NAME)'
-                  backendAzureRmKey: '$(ARM_KEY)'
-                  workingDirectory: 'environments/$(environment)'
+      - task: TerraformTaskV4@4
+        displayName: 'Terraform Init'
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'azure-connection'
+          backendAzureRmResourceGroupName: '$(ARM_RESOURCE_GROUP_NAME)'
+          backendAzureRmStorageAccountName: '$(ARM_STORAGE_ACCOUNT_NAME)'
+          backendAzureRmContainerName: '$(ARM_CONTAINER_NAME)'
+          backendAzureRmKey: '$(ARM_KEY)'
+          workingDirectory: 'environments/$(environment)'
 
-              - task: TerraformTaskV4@4
-                displayName: 'Terraform Destroy'
-                inputs:
-                  provider: 'azurerm'
-                  command: 'destroy'
-                  workingDirectory: 'environments/$(environment)'
-                  environmentServiceNameAzureRM: 'azure-connection'
+      - task: TerraformTaskV4@4
+        displayName: 'Terraform Destroy'
+        inputs:
+          provider: 'azurerm'
+          command: 'destroy'
+          workingDirectory: 'environments/$(environment)'
+          environmentServiceNameAzureRM: 'azure-connection'

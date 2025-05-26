@@ -1,4 +1,4 @@
-trigger: none
+trigger: none  # Prevents automatic runs; you can run manually
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -12,61 +12,53 @@ variables:
     value: '1.6.6'
 
 stages:
-  - stage: Terraform
-    jobs:
-      - job: TerraformPlan
+- stage: Terraform
+  jobs:
+  - job: TerraformJob
+    steps:
+      - task: TerraformInstaller@1
+        inputs:
+          terraformVersion: $(terraformVersion)
+
+      # Add this script step to map hyphenated secrets to Terraform variable names
+      - script: |
+          echo "vm_admin_username = \"$(vm-admin-username)\"" > environments/$(environment)/terraform.tfvars
+          echo "vm_admin_password = \"$(vm-admin-password)\"" >> environments/$(environment)/terraform.tfvars
+        displayName: 'Create terraform.tfvars with VM admin credentials'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+
+      - task: TerraformTaskV4@4
+        displayName: 'Terraform Init'
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'azure-connection'
+          backendAzureRmResourceGroupName: '$(ARM_RESOURCE_GROUP_NAME)'
+          backendAzureRmStorageAccountName: '$(ARM_STORAGE_ACCOUNT_NAME)'
+          backendAzureRmContainerName: '$(ARM_CONTAINER_NAME)'
+          backendAzureRmKey: '$(ARM_KEY)'
+          workingDirectory: 'environments/$(environment)'
+
+      - task: TerraformTaskV4@4
+        displayName: 'Terraform Validate'
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+          workingDirectory: 'environments/$(environment)'
+
+      - task: TerraformTaskV4@4
         displayName: 'Terraform Plan'
-        steps:
-          - task: TerraformInstaller@1
-            inputs:
-              terraformVersion: $(terraformVersion)
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: 'environments/$(environment)'
+          environmentServiceNameAzureRM: 'azure-connection'
 
-          - script: |
-              echo "vm_admin_username = \"$(vm-admin-username)\"" > environments/$(environment)/terraform.tfvars
-              echo "vm_admin_password = \"$(vm-admin-password)\"" >> environments/$(environment)/terraform.tfvars
-            displayName: 'Create terraform.tfvars with VM admin credentials'
-            workingDirectory: $(System.DefaultWorkingDirectory)
-
-          - task: TerraformTaskV4@4
-            displayName: 'Terraform Init'
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              backendServiceArm: 'azure-connection'
-              backendAzureRmResourceGroupName: '$(ARM_RESOURCE_GROUP_NAME)'
-              backendAzureRmStorageAccountName: '$(ARM_STORAGE_ACCOUNT_NAME)'
-              backendAzureRmContainerName: '$(ARM_CONTAINER_NAME)'
-              backendAzureRmKey: '$(ARM_KEY)'
-              workingDirectory: 'environments/$(environment)'
-
-          - task: TerraformTaskV4@4
-            displayName: 'Terraform Validate'
-            inputs:
-              provider: 'azurerm'
-              command: 'validate'
-              workingDirectory: 'environments/$(environment)'
-
-          - task: TerraformTaskV4@4
-            displayName: 'Terraform Plan'
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
-              workingDirectory: 'environments/$(environment)'
-              environmentServiceNameAzureRM: 'azure-connection'
-
-      - deployment: TerraformApply
+      - task: TerraformTaskV4@4
         displayName: 'Terraform Apply'
-        dependsOn: TerraformPlan
-        environment: dev  # This enables manual approval if configured in Azure DevOps
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          workingDirectory: 'environments/$(environment)'
+          environmentServiceNameAzureRM: 'azure-connection'
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: TerraformTaskV4@4
-                  displayName: 'Terraform Apply'
-                  inputs:
-                    provider: 'azurerm'
-                    command: 'apply'
-                    workingDirectory: 'environments/$(environment)'
-                    environmentServiceNameAzureRM: 'azure-connection'

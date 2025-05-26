@@ -28,17 +28,17 @@ It is designed for TESTING environments and integrates with Azure DevOps CI/CD, 
                                 |                                   |
                                 |  +-----------------------------+  |
                                 |  |  Azure Firewall             |  |
-                                |  |  (AzureFirewallSubnet)       |  |
+                                |  |  (AzureFirewallSubnet)      |  |
                                 |  +-----------------------------+  |
                                 |                                   |
                                 |  +-----------------------------+  |
-                                |  |  Bastion Host                |  |
-                                |  |  (AzureBastionSubnet)        |  |
+                                |  |  Bastion Host               |  |
+                                |  |  (AzureBastionSubnet)       |  |
                                 |  +-----------------------------+  |
                                 |                                   |
                                 |  +-----------------------------+  |
-                                |  |  VPN Gateway                 |  |
-                                |  |  (GatewaySubnet)             |  |
+                                |  |  VPN Gateway                |  |
+                                |  |  (GatewaySubnet)            |  |
                                 |  +-----------------------------+  |
                                 +-----------------+-----------------+
                                                   |
@@ -52,7 +52,7 @@ It is designed for TESTING environments and integrates with Azure DevOps CI/CD, 
                         |                                                   |
                 +-------v-------+                                   +-------v-------+
                 | Workloads     |                                   | Workloads     |
-                | Subnet        |                                   | Subnet        |
+                | Subnet  + NSG |                                   | Subnet + NSG  |
                 | (10.1.1.0/24) |                                   | (10.2.1.0/24) |
                 +-------+-------+                                   +-------+-------+
                         |                                                   |

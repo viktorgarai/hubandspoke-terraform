@@ -59,11 +59,14 @@ stages:
         dependsOn: TerraformPlan
         environment: dev  # This enables manual approval if configured in Azure DevOps
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-        steps:
-          - task: TerraformTaskV4@4
-            displayName: 'Terraform Apply'
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: 'environments/$(environment)'
-              environmentServiceNameAzureRM: 'azure-connection'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: TerraformTaskV4@4
+                  displayName: 'Terraform Apply'
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'apply'
+                    workingDirectory: 'environments/$(environment)'
+                    environmentServiceNameAzureRM: 'azure-connection'

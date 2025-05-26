@@ -54,7 +54,7 @@ stages:
               workingDirectory: 'environments/$(environment)'
               environmentServiceNameAzureRM: 'azure-connection'
 
-      - job: TerraformApply
+      - deployment: TerraformApply
         displayName: 'Terraform Apply'
         dependsOn: TerraformPlan
         environment: dev  # This enables manual approval if configured in Azure DevOps

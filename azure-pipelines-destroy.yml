@@ -15,6 +15,7 @@ stages:
 - stage: TerraformDestroy
   jobs:
   - job: DestroyJob
+    environment: dev # This enables manual approval if configured in Azure DevOps  
     steps:
       - task: TerraformInstaller@1
         inputs:

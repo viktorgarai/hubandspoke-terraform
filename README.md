@@ -4,7 +4,7 @@ This project provisions a secure and scalable **Azure Hub-Spoke network topology
 **This deployment is ideal for testing and for experimenting with various Azure networking and security scenarios.**  
 It is designed for TESTING environments and integrates with Azure DevOps CI/CD, supporting secure secret management via Azure Key Vault.
 
-> ** I Also have a test web application which you can integrated with a SQL database, you can run the application on WebApps, Windows/Linux VMs and do various testing scenarios in Azure
+> ** I Also have a test web application which you can integrate with an SQL database, you can run the application on WebApps, Windows/Linux VMs and do various testing scenarios in Azure
 > Link to the App: https://github.com/viktorgarai/TestWebApp **
 
 ---

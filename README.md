@@ -125,7 +125,10 @@ cd hub-spoke-azure/environments/dev
 ### 2. **Configure Backend and Variables**
 
 - Set up your remote backend (Azure Storage Account).
-  
+- Edit `variables.tf` or use a `terraform.tfvars` file for environment-specific values.
+
+## Configure remote state storage account
+
 $RESOURCE_GROUP_NAME='tfstate'
 $STORAGE_ACCOUNT_NAME="tfstate$(Get-Random)"
 $CONTAINER_NAME='tfstate'
@@ -138,8 +141,6 @@ $storageAccount = New-AzStorageAccount -ResourceGroupName $RESOURCE_GROUP_NAME -
 
 #### Create blob container
 New-AzStorageContainer -Name $CONTAINER_NAME -Context $storageAccount.context
-  
-- Edit `variables.tf` or use a `terraform.tfvars` file for environment-specific values.
 
 ### 3. **Azure DevOps Pipeline Setup**
 

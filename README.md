@@ -127,7 +127,7 @@ cd hub-spoke-azure/environments/dev
 - Set up your remote backend (Azure Storage Account).
 - Edit `variables.tf` or use a `terraform.tfvars` file for environment-specific values.
 
-## Configure remote state storage account
+### 2.1 Configure remote state storage account
 
 $RESOURCE_GROUP_NAME='tfstate' $STORAGE_ACCOUNT_NAME="tfstate$(Get-Random)" $CONTAINER_NAME='tfstate'
 

@@ -130,13 +130,13 @@ $RESOURCE_GROUP_NAME='tfstate'
 $STORAGE_ACCOUNT_NAME="tfstate$(Get-Random)"
 $CONTAINER_NAME='tfstate'
 
-# Create resource group
+#### Create resource group
 New-AzResourceGroup -Name $RESOURCE_GROUP_NAME -Location westeurope
 
-# Create storage account
+#### Create storage account
 $storageAccount = New-AzStorageAccount -ResourceGroupName $RESOURCE_GROUP_NAME -Name $STORAGE_ACCOUNT_NAME -SkuName Standard_LRS -Location westeurope -AllowBlobPublicAccess $false
 
-# Create blob container
+#### Create blob container
 New-AzStorageContainer -Name $CONTAINER_NAME -Context $storageAccount.context
   
 - Edit `variables.tf` or use a `terraform.tfvars` file for environment-specific values.

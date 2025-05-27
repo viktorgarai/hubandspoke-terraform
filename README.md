@@ -129,9 +129,7 @@ cd hub-spoke-azure/environments/dev
 
 ## Configure remote state storage account
 
-$RESOURCE_GROUP_NAME='tfstate'
-$STORAGE_ACCOUNT_NAME="tfstate$(Get-Random)"
-$CONTAINER_NAME='tfstate'
+$RESOURCE_GROUP_NAME='tfstate' $STORAGE_ACCOUNT_NAME="tfstate$(Get-Random)" $CONTAINER_NAME='tfstate'
 
 #### Create resource group
 New-AzResourceGroup -Name $RESOURCE_GROUP_NAME -Location westeurope

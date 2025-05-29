@@ -118,7 +118,7 @@ hub-spoke-azure/
 ### 1. **Clone the Repository**
 
 ```sh
-git clone https://github.com/viktorgarai/hub-spoke-azure.git
+git clone https://github.com/viktorgarai/hub-spoke-azure
 cd hub-spoke-azure/environments/dev
 ```
 
